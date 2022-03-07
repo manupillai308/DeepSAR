@@ -49,7 +49,7 @@ if __name__ == "__main__":
     parser.add_argument('--data-path', required=True, help="Path to the training data directory.")
     parser.add_argument('--label-path', required=True, help="Path to the training label directory.")
     parser.add_argument('--finetune', type=bool, required=True, help="Finetune the model")
-    parser.add_argument('--rpn-path', required=True, help="Path to trained RPN model ckpt")
+    parser.add_argument('--rpn-path', default=None, help="Path to trained RPN model ckpt")
     parser.add_argument('--dn-path', default=None, help="Path to trained DN model ckpt if finetuning")
     args = parser.parse_args()
 
@@ -62,6 +62,11 @@ if __name__ == "__main__":
                                     std=[0.229, 0.224, 0.225])
 
     finetune = args.finetune
+    if finetune:
+        assert args.dn_path, f"--dn-path must be provided for finetune {finetune}"
+    else:
+        assert args.rpn_path, f"--rpn-path must be provided for finetune {finetune}"
+        
     result_path = args.result_dir
     split_file = args.split_file
     cv_split = {"full":{"train":[], "test":[]}}
