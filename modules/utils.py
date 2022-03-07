@@ -105,17 +105,21 @@ def adaptive_gaussian_kernel(x, y, mu_x, mu_y, sigma, chipsize=800):
 
 
 
-def prepare_label(labels, chipsize, obj_size, threshold, fishing=False):
+def prepare_label(labels, chipsize, obj_size, threshold, fishing=False, length=False):
     x, y = np.meshgrid(np.arange(-chipsize/2, chipsize/2, 1), np.arange(-chipsize/2, chipsize/2, 1))
     x, y = x.reshape(-1), y.reshape(-1)
 
     inst_weight = np.zeros((chipsize, chipsize), dtype=np.float32)
     class_labels = np.zeros((chipsize, chipsize), dtype=np.int32)
+    length_arr = -1*np.ones((chipsize, chipsize), dtype=np.float32)
     
     if labels is None:
-        return class_labels, inst_weight
+        if length:
+            return class_labels, inst_weight, length_arr
+        else:
+            return class_labels, inst_weight
 
-    for row, col, is_vessel, is_fishing in zip(labels["detect_scene_row"], labels["detect_scene_column"], labels["is_vessel"], labels["is_fishing"]):
+    for row, col, is_vessel, is_fishing, vessel_length in zip(labels["detect_scene_row"], labels["detect_scene_column"], labels["is_vessel"], labels["is_fishing"], labels["vessel_length_m"]):
         k = adaptive_gaussian_kernel(x, y, mu_x=col, mu_y=row, sigma=obj_size)
         k /= k.max()
         class_mask = np.where(k>threshold)
@@ -132,13 +136,17 @@ def prepare_label(labels, chipsize, obj_size, threshold, fishing=False):
             label = label_dict["vessel"] if is_vessel else label_dict["not_vessel"]
 
         class_labels[class_mask[0], class_mask[1]] = label
+        if is_vessel and not np.isnan(vessel_length):
+            length_arr[class_mask[0], class_mask[1]] = vessel_length
 
         inst_weight += k
     
     row_ix, col_ix = np.where(inst_weight <= threshold)
     inst_weight[row_ix, col_ix] = 1.0
-    
-    return class_labels, inst_weight
+    if length:
+        return class_labels, inst_weight, length_arr
+    else:
+        return class_labels, inst_weight
 
 
 def joint_prob(fa, sr):

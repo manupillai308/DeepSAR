@@ -36,8 +36,9 @@ class Band(object):
 
 class RGBScene(object):
 
-    def __init__(self, path, id, chipsize, overwrite, shore=False):
-        print(f"\tProcessing scene: {id}")
+    def __init__(self, path, id, chipsize, overwrite, shore=False, verbose=False):
+        if verbose:
+            print(f"\tProcessing scene: {id}")
 
         self.path = path
         self.shore = shore
@@ -48,8 +49,10 @@ class RGBScene(object):
         self.row = self.vv.src.height
         self.col = self.vv.src.width
         self.labels = None
+        self.verbose = verbose
         if os.path.exists(os.path.join(self.path, self.json_path)) and not overwrite:
-            print(f"\tLoading labels from json")
+            if verbose:
+                print(f"\tLoading labels from json")
             self.labels = json.load(open(os.path.join(self.path, self.json_path)))
 
         assert self.vv == self.vh, f"Size mismatch for VV & VH bands in scene {self.id}"
@@ -101,10 +104,12 @@ class RGBScene(object):
                     chip_indexes.append(uid)
 
         if overwrite and labels is not None:
-            print(f"\tSaving in {self.json_path}")
+            if self.verbose:
+                print(f"\tSaving in {self.json_path}")
             json.dump(self.labels, open(os.path.join(self.path, self.json_path), "w"))
-        print(f"\tTotal chips extracted: {len(chip_indexes)}")
-        if labels is not None:
+        if self.verbose:
+            print(f"\tTotal chips extracted: {len(chip_indexes)}")
+        if labels is not None and self.verbose:
             print(f"\t\tBackground chips: {bg_chips}")
             print(f"\t\tForeground chips: {fg_chips}")
         
@@ -190,7 +195,7 @@ class RGBScene(object):
 
 class XView3Data(Dataset):
 
-    def __init__(self, labels_path, data_path, obj_size=5, threshold=0.5, preprocess_label=lambda x:x, chipsize=800, background_chip_ratio=0.5, overwrite=False, shore=False):
+    def __init__(self, labels_path, data_path, ignore_id = [], obj_size=5, threshold=0.5, preprocess_label=lambda x:x, chipsize=800, background_chip_ratio=0.5, overwrite=False, shore=False, verbose=False):
 
         self.data_path = data_path
         self.labels_path = labels_path
@@ -213,13 +218,14 @@ class XView3Data(Dataset):
         
         if isinstance(self.data_path, list):
             for dp in self.data_path:
-                scene_ids[dp] = os.listdir(dp)
+                scene_ids[dp] = list(filter(lambda x: x not in ignore_id, os.listdir(dp)))
         else:
-            scene_ids[self.data_path] = os.listdir(self.data_path)
+            scene_ids[self.data_path] = list(filter(lambda x: x not in ignore_id, os.listdir(self.data_path)))
         
         if shore:
             self.shore_ixs = []
-        print(f"Total scenes detected: {sum(map(len, scene_ids.values()))}")
+        if verbose:
+            print(f"Total scenes detected: {sum(map(len, scene_ids.values()))}")
         for dp, s_ids in scene_ids.items():
             for scene_id in s_ids: 
                 scene = RGBScene(path=os.path.join(dp, scene_id), id=scene_id, chipsize=chipsize, 
@@ -230,7 +236,8 @@ class XView3Data(Dataset):
                     indexes = indexes[0]
                 self.data_ixs.extend(indexes)
                 self.scenes[scene_id] = scene
-        print(f"Total chips extracted: {len(self.data_ixs)}")
+        if verbose:
+            print(f"Total chips extracted: {len(self.data_ixs)}")
         
     
     def __len__(self):
@@ -278,4 +285,3 @@ class XView3DDN(XView3Data):
 
         class_labels, inst_weight = prepare_label(labels, self.chipsize, self.obj_size, self.threshold, fishing=True)
         return rpn[0], torch.from_numpy(rgb_img), torch.from_numpy(class_labels) if not flag else torch.from_numpy(np.zeros_like(class_labels)), torch.from_numpy(inst_weight) if not flag else torch.from_numpy(np.ones_like(inst_weight))
-
