@@ -92,3 +92,18 @@ All the evaluations are performed according to the metrics provided by the [xVie
 ## Conclusion
 
 > In this work, we propose a model architecture, DeepSAR, for maritime object localization and present a novel two-stage progressive training methodology involving two-loss sampling (Stochastic and Hard Negative) techniques. The first stage focuses on training the model to detect foreground regions, and the second stage aims at refining the foreground predictions into respective classes of objects while pushing the model to reduce false positives. Our experimental results on the challenging xView3 dataset show our method to out-perform conventional small object and generic object localization methods in Synthetic Aperture Radar images.
+
+## Citation
+If you use our work, please cite it as:
+```bibtex
+@inproceedings{9898020-deep-sar,  
+    author={Pillai, Manu S and Bhattacharya, Abhijeet and Baweja, Tanmay and Gupta, Rohit and Shah, Mubarak},  
+    booktitle={2022 IEEE International Conference on Image Processing (ICIP)},   
+    title={DeepSAR: Vessel Detection in SAR Imagery with Noisy Labels},   
+    year={2022},  
+    volume={},  
+    number={},  
+    pages={2526-2530},  
+    doi={10.1109/ICIP46576.2022.9898020}
+}
+```
