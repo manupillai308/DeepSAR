@@ -1,11 +1,20 @@
-@article{Lisa_My_awesome_research_2021,
-  author = {Lisa, Mona and Bot, Hew},
-  doi = {10.0000/00000},
-  journal = {Journal Title},
-  month = {9},
-  number = {1},
-  pages = {1--10},
-  title = {{My awesome research software}},
-  volume = {1},
-  year = {2021}
-}
+cff-version: 1.2.0
+message: "If you use this repository, please cite our work."
+authors:
+- family-names: "Pillai"
+  given-names: "Manu S"
+- family-names: "Bhattacharya"
+  given-names: "Abhijeet"
+- family-names: "Baweja"
+  given-names: "Tanmay"
+- family-names: "Gupta"
+  given-names: "Rohit"
+- family-names: "Shah"
+  given-names: "Mubarak"
+title: "DeepSAR: Vessel Detection in SAR Imagery with Noisy Labels"
+version: 1.0.0
+doi: 10.1109/ICIP46576.2022.9898020
+year: 2022
+pages: 2526-2530
+booktitle: 2022 IEEE International Conference on Image Processing (ICIP)
+url: "https://ieeexplore.ieee.org/document/9898020"
