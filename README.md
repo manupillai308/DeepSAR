@@ -1,5 +1,5 @@
 # DeepSAR: Vessel Detection in SAR Imagery with Noisy Labels
-This repository is the official implementation of [DeepSAR: Vessel Detection in SAR Imagery with Noisy Labels](https://github.com/manupillai308/DeepSAR). 
+This repository is the official implementation of [DeepSAR: Vessel Detection in SAR Imagery with Noisy Labels](https://ieeexplore.ieee.org/document/9898020). 
 
 ## Abstract
 > Unlike traditional optoelectronic satellite imaging, Synthetic Aperture Radar (SAR) allows remote sensing applications to operate under all weather conditions. This makes it uniquely valuable for detecting ships/vessels involved in illegal, unreported, and unregulated (IUU) fishing. While recent work has shown significant improvement in this domain, detecting small objects using noisy point annotations remains an unexplored area. In order to meet the unique challenges of this problem, we propose a progressive training methodology that utilizes two different spatial sampling strategies. Firstly, we use stochastic sampling of background points to reduce the impact of class imbalance and missing labels, and secondly, during the refinement stage, we use hard negative sampling to improve the model. Experimental results on the challenging xView3 dataset show that our method outperforms conventional small object localization methods in a large, noisy dataset of SAR images.
